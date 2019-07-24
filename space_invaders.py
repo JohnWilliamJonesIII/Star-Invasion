@@ -19,24 +19,31 @@ title_press_start_font = pygame.font.SysFont('Comic Sans', 22, True)
 title_copyright_font = pygame.font.SysFont('Comic Sans', 20, True)
 pygame.display.set_caption(' STAR INVASION ')
 
+x_coordinate = 50
+y_coordinate = 100
 
 def handle_events():
+    global x_coordinate, y_coordinate, is_playing
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            snek.is_alive = False
+            is_playing = False
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                snek.set_direction_left()
+                x_coordinate -= 10
             elif event.key == pygame.K_RIGHT:
-                snek.set_direction_right()
+                x_coordinate += 10
+
 
 # Main Game Loop
 is_playing = True
 while is_playing:
+
+    handle_events()
+
     game_display.blit(game_display, (0, 0))
 
     game_display.fill(BACKGROUND_COLOR)
-    pygame.draw.rect(game_display, (LIME_GREEN), pygame.Rect(50, 50, 20, 20))
+    pygame.draw.rect(game_display, (LIME_GREEN), pygame.Rect(x_coordinate, y_coordinate, 20, 20))
 
     #score_text = score_font.render(str(snek.score), False, (255, 255, 255))
 
