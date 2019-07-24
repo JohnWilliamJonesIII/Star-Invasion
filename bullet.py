@@ -10,4 +10,6 @@ class Bullet():
         game_display.blit(self.img, (self.xcor, self.ycor))
     def move(self):
         self.ycor -= 10
+    def collided_with_top_wall(self, top_wall_y_location):
+        return self.ycor <= top_wall_y_location
 

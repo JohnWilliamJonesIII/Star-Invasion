@@ -20,3 +20,8 @@ class Hero():
     def shoot(self, bullet_image):
         new_bullet = Bullet(bullet_image, self.xcor, self.ycor)
         self.bullets_fired.append(new_bullet)
+
+    def remove_dead_bullets(self):
+        for i in range(len(self.bullets_fired) -1, -1, -1):
+            if self.bullets_fired[i].is_alive == False:
+                self.bullets_fired.pop(i)
