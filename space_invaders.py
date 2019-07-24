@@ -4,9 +4,10 @@ from hero import Hero
 
 
 # Media Files
-player_image = pygame.image.load('si-player.gif')
+player_image = pygame.image.load('media/si-player.gif')
+bullet_image = pygame.image.load('media/si-bullet.gif')
 
-# Game Settings:
+##Game Settings##
 # Colours
 BACKGROUND_COLOR = (0, 0, 0)
 BLACK = (0, 0 ,0)
@@ -56,6 +57,8 @@ def handle_events():
             elif event.key == pygame.K_RIGHT:
                 should_move_right = True
                 should_move_left = False
+            elif event.key == pygame.K_UP or event.key == pygame.K_SPACE:
+                hero.shoot(bullet_image)
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT:
                 should_move_left = False
@@ -81,10 +84,14 @@ while is_playing:
 
     game_display.fill(BACKGROUND_COLOR)
 
+    #Borders
     pygame.draw.rect(game_display, (FOREST_GREEN), (GAME_SIDE_MARGIN, GAME_TOP_MARGIN, WINDOW_WIDTH - GAME_SIDE_MARGIN * 2, WINDOW_HEIGHT - GAME_BOTTOM_MARGIN * 2))
     pygame.draw.rect(game_display, (BACKGROUND_COLOR), (GAME_LEFT_WALL, GAME_TOP_WALL, WINDOW_WIDTH - GAME_LEFT_WALL - GAME_SIDE_MARGIN - GAME_BORDER_WIDTH, WINDOW_HEIGHT - GAME_TOP_WALL - GAME_BOTTOM_MARGIN - GAME_BORDER_WIDTH))
 
     hero.show(game_display)
+    for bullet in hero.bullets_fired:
+        bullet.move()
+        bullet.show(game_display)
 
     #score_text = score_font.render(str(snek.score), False, (255, 255, 255))
 
