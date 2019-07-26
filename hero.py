@@ -1,17 +1,13 @@
 from bullet import Bullet
+from game_object import Game_Object
 
-class Hero():
+class Hero(Game_Object):
     def __init__(self, image, x_coordinate, y_coordinate):
-        self.is_alive = True
-        self.img = image
-        self.width = image.get_width()
-        self.xcor = x_coordinate
-        self.ycor = y_coordinate
         self.direction = 0
         self.speed = 10
+        self.score = 0
         self.bullets_fired = []
-    def show(self, game_display):
-        game_display.blit(self.img, (self.xcor, self.ycor))
+        super().__init__(image, x_coordinate, y_coordinate)
 
     def collided_with_right_wall(self, right_wall_x_location):
         return self.xcor + self.width >= right_wall_x_location
@@ -23,10 +19,25 @@ class Hero():
         new_bullet = Bullet(bullet_image, self.xcor + self.width / 2 - bullet_image.get_width() / 2, self.ycor)
         self.bullets_fired.append(new_bullet)
 
+    def handle_bullet_wall_collision(self, top_wall):
+        for bullet in self.bullets_fired:
+            if bullet.collided_with_top_wall(top_wall):
+                bullet.is_alive = False
+
+        self.remove_dead_bullets()
+
     def remove_dead_bullets(self):
         for i in range(len(self.bullets_fired) -1, -1, -1):
             if self.bullets_fired[i].is_alive == False:
                 self.bullets_fired.pop(i)
+
+    def move_all_bullets(self):
+        for bullet in self.bullets_fired:
+            bullet.move()
+
+    def show_all_bullets(self, game_display):
+        for bullet in self.bullets_fired:
+            bullet.show(game_display)
 
     def move(self, left_wall, right_wall):
         if self.direction == -1 and self.collided_with_left_wall(left_wall) == False:

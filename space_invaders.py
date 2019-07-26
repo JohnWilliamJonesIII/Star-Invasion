@@ -3,10 +3,13 @@ import pygame
 from hero import Hero
 from fleet import Fleet
 
+pygame.init()
 # Media Files
 player_image = pygame.image.load('media/si-player.gif')
 bullet_image = pygame.image.load('media/si-bullet.gif')
 enemy_image = pygame.image.load('media/si-enemy.gif')
+bullet_sound = pygame.mixer.Sound('media/si-laser.wav')
+explosion_sound = pygame.mixer.Sound('media/si-explode.wav')
 
 ##Game Settings##
 # Colours
@@ -33,7 +36,6 @@ GAME_LEFT_WALL = GAME_SIDE_MARGIN + GAME_BORDER_WIDTH
 GAME_FPS = 40
 
 
-pygame.init()
 clock = pygame.time.Clock()
 game_display = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 score_font = pygame.font.SysFont('Comic Sans', 22, True)
@@ -52,55 +54,75 @@ def handle_events():
             elif event.key == pygame.K_RIGHT:
                 hero.set_direction_right()
             elif event.key == pygame.K_UP or event.key == pygame.K_SPACE:
+                bullet_sound.play()
                 hero.shoot(bullet_image)
+            elif event.key == pygame.K_p:
+                pause_game() 
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT:
                 hero.set_direction_none()
             elif event.key == pygame.K_RIGHT:
                 hero.set_direction_none()
+            
+
+def show_background():
+    game_display.blit(game_display, (0, 0))
+    game_display.fill(BACKGROUND_COLOR)
+    pygame.draw.rect(game_display, (FOREST_GREEN), (GAME_SIDE_MARGIN, GAME_TOP_MARGIN, WINDOW_WIDTH - GAME_SIDE_MARGIN * 2, WINDOW_HEIGHT - GAME_BOTTOM_MARGIN * 2))
+    pygame.draw.rect(game_display, (BACKGROUND_COLOR), (GAME_LEFT_WALL, GAME_TOP_WALL, WINDOW_WIDTH - GAME_LEFT_WALL - GAME_SIDE_MARGIN - GAME_BORDER_WIDTH, WINDOW_HEIGHT - GAME_TOP_WALL - GAME_BOTTOM_MARGIN - GAME_BORDER_WIDTH))
+
+def pause_game():
+    game_is_paused = True
+    while game_is_paused:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                game_is_paused = False
+                hero.is_alive = False
+            elif event.type == pygame.KEYDOWN:
+                 if event.key == pygame.K_p:
+                     game_is_paused = False
+        clock.tick(GAME_FPS)
+            
 
 hero = Hero(player_image, 200, GAME_BOTTOM_WALL - player_image.get_height())
 
-fleet = Fleet(3, 5, 4, enemy_image, GAME_LEFT_WALL + 1, GAME_TOP_WALL + 1)
+fleet = Fleet(5, 7, 2, enemy_image, GAME_LEFT_WALL + 1, GAME_TOP_WALL + 1)
 
 # Main Game Loop
 while hero.is_alive:
 
     handle_events()
 
-    hero.move(GAME_LEFT_WALL, GAME_RIGHT_WALL)
-
     fleet.handle_wall_collision(GAME_LEFT_WALL, GAME_RIGHT_WALL)
+    hero.handle_bullet_wall_collision(GAME_TOP_WALL)
 
+    for bullet in hero.bullets_fired:
+        for ship in fleet.ships:
+            if bullet.has_collided_with(ship):
+                explosion_sound.play()
+                bullet.is_alive = False
+                ship.is_alive = False
+                hero.score += 1
+    
+    fleet.remove_dead_ships()
+
+    hero.move(GAME_LEFT_WALL, GAME_RIGHT_WALL)
     fleet.move_over()
+    hero.move_all_bullets()
 
-    game_display.blit(game_display, (0, 0))
-
-    game_display.fill(BACKGROUND_COLOR)
-
-    #Borders
-    pygame.draw.rect(game_display, (FOREST_GREEN), (GAME_SIDE_MARGIN, GAME_TOP_MARGIN, WINDOW_WIDTH - GAME_SIDE_MARGIN * 2, WINDOW_HEIGHT - GAME_BOTTOM_MARGIN * 2))
-    pygame.draw.rect(game_display, (BACKGROUND_COLOR), (GAME_LEFT_WALL, GAME_TOP_WALL, WINDOW_WIDTH - GAME_LEFT_WALL - GAME_SIDE_MARGIN - GAME_BORDER_WIDTH, WINDOW_HEIGHT - GAME_TOP_WALL - GAME_BOTTOM_MARGIN - GAME_BORDER_WIDTH))
-
+    show_background()
     hero.show(game_display)
-
     fleet.show(game_display)
-
-    for bullet in hero.bullets_fired:
-        if bullet.collided_with_top_wall(GAME_TOP_WALL):
-            bullet.is_alive = False
-
-    hero.remove_dead_bullets()
-
-    for bullet in hero.bullets_fired:
-        bullet.move()
-        bullet.show(game_display)
+    hero.show_all_bullets(game_display)
+    
 
     #score_text = score_font.render(str(snek.score), False, (255, 255, 255))
 
     #game_display.blit(score_text, (0, 0))
 
-    #pygame.display.set_caption('STAR INVASION | Score = ' + str(snek.score) + ' | Press P to pause')
+    score_text = score_font.render(str(hero.score), False, (255, 255, 255))
+    game_display.blit(score_text, (0, 0))
+    pygame.display.set_caption('STAR INVASION | Score = ' + str(hero.score) + ' | Press P to pause')
 
     pygame.display.update()
 

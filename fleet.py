@@ -38,4 +38,8 @@ class Fleet():
         for ship in self.ships:
             ship.move_over(self.direction * self.speed)
          
-         
+    def remove_dead_ships(self):
+        for i in range(len(self.ships) -1, -1, -1):
+            if self.ships[i].is_alive == False:
+                self.ships.pop(i)
+
