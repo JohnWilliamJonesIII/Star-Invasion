@@ -1,8 +1,7 @@
 # Beginning of Code
 import pygame
 from hero import Hero
-from enemy import Enemy
-
+from fleet import Fleet
 
 # Media Files
 player_image = pygame.image.load('media/si-player.gif')
@@ -61,18 +60,8 @@ def handle_events():
                 hero.set_direction_none()
 
 hero = Hero(player_image, 200, GAME_BOTTOM_WALL - player_image.get_height())
-enemies = []
-enemies.append(Enemy(enemy_image, 30, 30))
-enemies.append(Enemy(enemy_image, 60, 30))
-enemies.append(Enemy(enemy_image, 90, 30))
-enemies.append(Enemy(enemy_image, 120, 30))
-enemies.append(Enemy(enemy_image, 150, 30))
-enemies.append(Enemy(enemy_image, 30, 60))
-enemies.append(Enemy(enemy_image, 60, 60))
-enemies.append(Enemy(enemy_image, 90, 60))
-enemies.append(Enemy(enemy_image, 120, 60))
-enemies.append(Enemy(enemy_image, 150, 60))
 
+fleet = Fleet(3, 5, 4, enemy_image, GAME_LEFT_WALL + 1, GAME_TOP_WALL + 1)
 
 # Main Game Loop
 while hero.is_alive:
@@ -81,27 +70,9 @@ while hero.is_alive:
 
     hero.move(GAME_LEFT_WALL, GAME_RIGHT_WALL)
 
-    # Move each enemy down and change its direction if it has hit a wall.
-    for enemy in enemies:
-        if enemy.collided_with_left_wall(GAME_LEFT_WALL):
-            # Move all enemies down and change all their directions
-            for e in enemies:
-                e.ycor += 10
-                e.direction = 1
-            break      
-        if enemy.collided_with_right_wall(GAME_RIGHT_WALL):
-            for e in enemies:
-                e.ycor += 10
-                e.direction = -1
-            break
+    fleet.handle_wall_collision(GAME_LEFT_WALL, GAME_RIGHT_WALL)
 
-
-    # Move each enemy over based on its direction
-    for enemy in enemies:
-        enemy.xcor += 4 * enemy.direction
-    ##for i in range (0, len(enemies))  ^--------------| Does the exact same thing as the for loop above 
-        ##enemies[i].xcor += 10 * enemies[i].direction
-
+    fleet.move_over()
 
     game_display.blit(game_display, (0, 0))
 
@@ -112,8 +83,8 @@ while hero.is_alive:
     pygame.draw.rect(game_display, (BACKGROUND_COLOR), (GAME_LEFT_WALL, GAME_TOP_WALL, WINDOW_WIDTH - GAME_LEFT_WALL - GAME_SIDE_MARGIN - GAME_BORDER_WIDTH, WINDOW_HEIGHT - GAME_TOP_WALL - GAME_BOTTOM_MARGIN - GAME_BORDER_WIDTH))
 
     hero.show(game_display)
-    for enemy in enemies:
-        enemy.show(game_display)
+
+    fleet.show(game_display)
 
     for bullet in hero.bullets_fired:
         if bullet.collided_with_top_wall(GAME_TOP_WALL):
