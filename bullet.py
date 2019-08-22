@@ -5,7 +5,7 @@ class Bullet(Game_Object):
         super().__init__(image, x_coordinate, y_coordinate)
 
     def move(self):
-        self.ycor -= 10
+        self.ycor -= 8
         
     def collided_with_top_wall(self, top_wall_y_location):
         return self.ycor < top_wall_y_location

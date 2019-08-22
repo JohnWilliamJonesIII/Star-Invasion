@@ -1,7 +1,9 @@
 from game_object import Game_Object
+from laser import Laser
 
 class Enemy(Game_Object):
     def __init__(self, image, x_coordinate, y_coordinate):
+        self.lasers_fired = []
         super().__init__(image, x_coordinate, y_coordinate)
 
     def collided_with_right_wall(self, right_wall_x_location):
@@ -16,3 +18,4 @@ class Enemy(Game_Object):
     def move_down(self, amount_to_move):
         self.ycor += amount_to_move
 
+    
