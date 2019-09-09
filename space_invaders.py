@@ -87,7 +87,6 @@ GAME_FPS = 40
 LIFE_BAR_COLUMN = 5
 LIFE_BAR_ROW = 1
 LIFE_BAR_SIZE = LIFE_BAR_COLUMN * LIFE_BAR_ROW
-
 START_GAME = True
 GAME_OVER = False
 # Arrays for animated star background
@@ -184,15 +183,84 @@ def handle_events():
 
 # Defining Game Object classes
 truecoders_logo = Truecoders_Logo(truecoders_logo_image, 230, 200)
-pixel_planet = Pixel_Planet(pixel_planet_image, 175, 575)
+pixel_planet = Pixel_Planet(pixel_planet_image, -30, 575)
 hero = Hero(player_image, 225, GAME_BOTTOM_WALL - player_image.get_height())
 fleet = Fleet(FLEET_ROW, FLEET_COLUMN, 1, enemy_image, GAME_LEFT_WALL + 1, GAME_TOP_WALL + 1)
 hero_shield = Hero_Shield(hero_shield_image, hero.xcor, 500)
 ultra_bullet = Ultra_Bullet(ultra_bullet_image, hero.xcor, 535)
 hero_life_bars = Life_Bars(LIFE_BAR_ROW, LIFE_BAR_COLUMN, hero_first_life_image, GAME_LEFT_WALL + 125, 1)
 
+# Text Renderer
+def text_format(message, textFont, textSize, textColor):
+    newFont=pygame.font.SysFont(textFont, textSize)
+    newText=newFont.render(message, 0, textColor)
+    return newText
+
+# Main Menu
+Show_Menu_Screen = True
+selected = "start"
+while Show_Menu_Screen: 
+    for event in pygame.event.get():
+        if event.type==pygame.QUIT:
+            pygame.quit()
+            quit()
+        if event.type==pygame.KEYDOWN:
+            if event.key==pygame.K_UP:
+                selected = "start"
+            elif event.key==pygame.K_DOWN:
+                selected = "quit"
+            if event.key == pygame.K_RETURN:
+                if selected == "start":
+                    print("Start")
+                    Show_Menu_Screen = False
+                    show_title_screen = True
+                if selected == "quit":
+                    pygame.quit()
+                    quit()
+    # Main Menu UI
+    game_display.blit(game_display, (0, 0))
+    game_display.fill(BACKGROUND_COLOR)
+    # title = text_format("   | STAR INVASION |", 'Comic Sans', 70, WHITE)
+    if selected == "start":
+        text_start = text_format("PLAY", 'Comic Sans', 60, WHITE)
+    else:
+        text_start = text_format("PLAY", 'Comic Sans', 60, GREY)
+    if selected == "quit":
+        text_quit = text_format("QUIT", 'Comic Sans', 60, WHITE)
+    else:
+        text_quit = text_format("QUIT", 'Comic Sans', 60, GREY)
+    for star in star_field_slow:
+        star[1] += 1
+        if star[1] > WINDOW_HEIGHT:
+            star[0] = random.randrange(0, WINDOW_WIDTH)
+            star[1] = random.randrange(-20, -5)
+        pygame.draw.circle(game_display, GREY, star, 3)
+    for star in star_field_medium:
+        star[1] += 4
+        if star[1] > WINDOW_HEIGHT:
+            star[0] = random.randrange(0, WINDOW_WIDTH)
+            star[1] = random.randrange(-20, -5)
+        pygame.draw.circle(game_display, GREY, star, 2)
+    for star in star_field_fast:
+        star[1] += 8
+        if star[1] > WINDOW_HEIGHT:
+            star[0] = random.randrange(0, WINDOW_WIDTH)
+            star[1] = random.randrange(-20, -5)
+        pygame.draw.circle(game_display, GREY, star, 1)
+    # title_rect = title.get_rect()
+    start_rect = text_start.get_rect()
+    quit_rect = text_quit.get_rect()
+    # Main Menu Text
+    # game_display.blit(title, (0, 150))
+    game_display.blit(text_start, (WINDOW_WIDTH/2 - (start_rect[2]/2), 300))
+    game_display.blit(text_quit, (WINDOW_WIDTH/2 - (quit_rect[2]/2), 360))
+    hero.show(game_display)
+    pygame.display.update()
+    clock.tick(GAME_FPS)
+    pygame.display.set_caption("STAR INVASION")
+
 # Title Screen
-songs = play_music(path='/Users/John/Source/Repos/SpaceInvadersMarkVIII/Media')
+songs = play_music(path = '/Users/John/Source/Repos/SpaceInvadersMarkVIII/Media')
 current_background_music_track = 2 # The current song to load
 pygame.mixer.music.load(songs[current_background_music_track])
 pygame.mixer.music.play()
@@ -333,6 +401,7 @@ while START_GAME:
                 clock.tick(.7)
                 laser.is_alive = False
                 START_GAME = False
+                menu = True
         elif laser.has_collided_with(ultra_bullet):
             laser_bullet_collision_sound.play()
             laser.is_alive = False
@@ -416,3 +485,4 @@ while START_GAME:
 
 pygame.display.quit() # For Mac
 pygame.quit()
+quit()
