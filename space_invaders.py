@@ -372,7 +372,8 @@ while START_GAME:
                 laser.is_alive = False
                 START_GAME = False
                 if START_GAME == False:
-                    run("Star-Invasion.py")
+                    execfile("space_invaders.py")
+
         elif laser.has_collided_with(ultra_bullet):
             laser_bullet_collision_sound.play()
             laser.is_alive = False
