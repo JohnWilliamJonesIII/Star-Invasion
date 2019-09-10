@@ -190,45 +190,67 @@ hero_shield = Hero_Shield(hero_shield_image, hero.xcor, 500)
 ultra_bullet = Ultra_Bullet(ultra_bullet_image, hero.xcor, 535)
 hero_life_bars = Life_Bars(LIFE_BAR_ROW, LIFE_BAR_COLUMN, hero_first_life_image, GAME_LEFT_WALL + 125, 1)
 
+## Main Menu
 # Text Renderer
 def text_format(message, textFont, textSize, textColor):
-    newFont=pygame.font.SysFont(textFont, textSize)
-    newText=newFont.render(message, 0, textColor)
+    newFont = pygame.font.SysFont(textFont, textSize)
+    newText = newFont.render(message, 0, textColor)
     return newText
-
-# Main Menu
+songs = play_music(path = '/Users/John/Source/Repos/SpaceInvadersMarkVIII/Media')
+current_background_music_track = 1 # The current song to load
+pygame.mixer.music.load(songs[current_background_music_track])
+pygame.mixer.music.play()
+current_background_music_track += 1
 Show_Menu_Screen = True
-selected = "start"
+Selected_Option = "PLAY"
 while Show_Menu_Screen: 
     for event in pygame.event.get():
         if event.type==pygame.QUIT:
             pygame.quit()
             quit()
         if event.type==pygame.KEYDOWN:
-            if event.key==pygame.K_UP:
-                selected = "start"
-            elif event.key==pygame.K_DOWN:
-                selected = "quit"
+            if event.key == pygame.K_UP and Selected_Option == "QUIT":
+                Selected_Option = "PLAY"
+            elif event.key == pygame.K_UP and Selected_Option == "PLAY":
+                Selected_Option = "QUIT"
+            elif event.key == pygame.K_DOWN and Selected_Option == "PLAY":
+                Selected_Option = "QUIT"
+            elif event.key == pygame.K_DOWN and Selected_Option == "QUIT":
+                Selected_Option = "PLAY"
+            elif event.key == pygame.K_q:
+                pause_music.toggle()
+            elif event.key == pygame.K_1 or event.key == pygame.K_KP1:
+                current_background_music_track = 0 # The current song to load
+                pygame.mixer.music.load(songs[current_background_music_track])
+                pygame.mixer.music.play()
+            elif event.key == pygame.K_2 or event.key == pygame.K_KP2:
+                current_background_music_track = 1 # The current song to load
+                pygame.mixer.music.load(songs[current_background_music_track])
+                pygame.mixer.music.play()
+            elif event.key == pygame.K_3 or event.key == pygame.K_KP3:
+                current_background_music_track = 2 # The current song to load
+                pygame.mixer.music.load(songs[current_background_music_track])
+                pygame.mixer.music.play()
             if event.key == pygame.K_RETURN:
-                if selected == "start":
-                    print("Start")
+                if Selected_Option == "PLAY":
                     Show_Menu_Screen = False
                     show_title_screen = True
-                if selected == "quit":
+                if Selected_Option == "QUIT":
                     pygame.quit()
                     quit()
+
     # Main Menu UI
     game_display.blit(game_display, (0, 0))
     game_display.fill(BACKGROUND_COLOR)
     # title = text_format("   | STAR INVASION |", 'Comic Sans', 70, WHITE)
-    if selected == "start":
-        text_start = text_format("PLAY", 'Comic Sans', 60, WHITE)
+    if Selected_Option == "PLAY":
+        text_start = text_format("PLAY", 'Comic Sans', 40, WHITE)
     else:
-        text_start = text_format("PLAY", 'Comic Sans', 60, GREY)
-    if selected == "quit":
-        text_quit = text_format("QUIT", 'Comic Sans', 60, WHITE)
+        text_start = text_format("PLAY", 'Comic Sans', 40, GREY)
+    if Selected_Option == "QUIT":
+        text_quit = text_format("QUIT", 'Comic Sans', 40, WHITE)
     else:
-        text_quit = text_format("QUIT", 'Comic Sans', 60, GREY)
+        text_quit = text_format("QUIT", 'Comic Sans', 40, GREY)
     for star in star_field_slow:
         star[1] += 1
         if star[1] > WINDOW_HEIGHT:
@@ -247,67 +269,11 @@ while Show_Menu_Screen:
             star[0] = random.randrange(0, WINDOW_WIDTH)
             star[1] = random.randrange(-20, -5)
         pygame.draw.circle(game_display, GREY, star, 1)
-    # title_rect = title.get_rect()
+    
     start_rect = text_start.get_rect()
     quit_rect = text_quit.get_rect()
-    # Main Menu Text
-    # game_display.blit(title, (0, 150))
     game_display.blit(text_start, (WINDOW_WIDTH/2 - (start_rect[2]/2), 300))
     game_display.blit(text_quit, (WINDOW_WIDTH/2 - (quit_rect[2]/2), 360))
-    hero.show(game_display)
-    pygame.display.update()
-    clock.tick(GAME_FPS)
-    pygame.display.set_caption("STAR INVASION")
-
-# Title Screen
-songs = play_music(path = '/Users/John/Source/Repos/SpaceInvadersMarkVIII/Media')
-current_background_music_track = 2 # The current song to load
-pygame.mixer.music.load(songs[current_background_music_track])
-pygame.mixer.music.play()
-current_background_music_track += 1
-show_title_screen = True
-while show_title_screen:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            show_title_screen = False
-            START_GAME = False
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RETURN:
-                show_title_screen = False
-            elif event.key == pygame.K_q:
-                pause_music.toggle()
-            elif event.key == pygame.K_1 or event.key == pygame.K_KP1:
-                current_background_music_track = 0 # The current song to load
-                pygame.mixer.music.load(songs[current_background_music_track])
-                pygame.mixer.music.play()
-            elif event.key == pygame.K_2 or event.key == pygame.K_KP2:
-                current_background_music_track = 1 # The current song to load
-                pygame.mixer.music.load(songs[current_background_music_track])
-                pygame.mixer.music.play()
-            elif event.key == pygame.K_3 or event.key == pygame.K_KP3:
-                current_background_music_track = 2 # The current song to load
-                pygame.mixer.music.load(songs[current_background_music_track])
-                pygame.mixer.music.play()
-    game_display.blit(game_display, (0, 0))
-    game_display.fill(BACKGROUND_COLOR)
-    for star in star_field_slow:
-        star[1] += 1
-        if star[1] > WINDOW_HEIGHT:
-            star[0] = random.randrange(0, WINDOW_WIDTH)
-            star[1] = random.randrange(-20, -5)
-        pygame.draw.circle(game_display, GREY, star, 3)
-    for star in star_field_medium:
-        star[1] += 4
-        if star[1] > WINDOW_HEIGHT:
-            star[0] = random.randrange(0, WINDOW_WIDTH)
-            star[1] = random.randrange(-20, -5)
-        pygame.draw.circle(game_display, GREY, star, 2)
-    for star in star_field_fast:
-        star[1] += 8
-        if star[1] > WINDOW_HEIGHT:
-            star[0] = random.randrange(0, WINDOW_WIDTH)
-            star[1] = random.randrange(-20, -5)
-        pygame.draw.circle(game_display, YELLOW, star, 1)
     title_text = title_font.render('| STAR INVASION |', False, CYAN)
     title_press_start_text = title_press_start_font.render('PRESS ENTER TO START', False, RED)
     title_copyright_text = title_copyright_font.render('©2019 JOHN WILLIAM JONES III | TRUECODERS', False, BLUE)
@@ -401,7 +367,6 @@ while START_GAME:
                 clock.tick(.7)
                 laser.is_alive = False
                 START_GAME = False
-                menu = True
         elif laser.has_collided_with(ultra_bullet):
             laser_bullet_collision_sound.play()
             laser.is_alive = False
