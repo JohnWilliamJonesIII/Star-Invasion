@@ -53,6 +53,10 @@ def play_music(path):
     return songs
 pause_music = Pause_Music()
 
+def run(runfile):
+  with open(runfile,"r") as rnf:
+    exec(rnf.read())
+
 ##Game Settings##
 # Colours
 BACKGROUND_COLOR = (0, 0, 0)
@@ -367,6 +371,8 @@ while START_GAME:
                 clock.tick(.7)
                 laser.is_alive = False
                 START_GAME = False
+                if START_GAME == False:
+                    run("Star-Invasion.py")
         elif laser.has_collided_with(ultra_bullet):
             laser_bullet_collision_sound.play()
             laser.is_alive = False
