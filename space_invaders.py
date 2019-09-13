@@ -126,6 +126,8 @@ def handle_events():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             START_GAME = False
+            pygame.quit()
+            quit()
         elif event.type == pygame.KEYDOWN:
             # Move Left
             if event.key == pygame.K_LEFT:
@@ -201,7 +203,7 @@ def text_format(message, textFont, textSize, textColor):
     newText = newFont.render(message, 0, textColor)
     return newText
 songs = play_music(path = '/Users/John/Source/Repos/SpaceInvadersMarkVIII/Media')
-current_background_music_track = 1 # The current song to load
+current_background_music_track = 2 # The current song to load
 pygame.mixer.music.load(songs[current_background_music_track])
 pygame.mixer.music.play()
 current_background_music_track += 1
@@ -214,10 +216,14 @@ while Show_Menu_Screen:
             quit()
         if event.type==pygame.KEYDOWN:
             if event.key == pygame.K_UP and Selected_Option == "QUIT":
-                Selected_Option = "PLAY"
+                Selected_Option = "CONTROLS"
             elif event.key == pygame.K_UP and Selected_Option == "PLAY":
                 Selected_Option = "QUIT"
+            elif event.key == pygame.K_UP and Selected_Option == "CONTROLS":
+                Selected_Option = "PLAY"
             elif event.key == pygame.K_DOWN and Selected_Option == "PLAY":
+                Selected_Option = "CONTROLS"
+            elif event.key == pygame.K_DOWN and Selected_Option == "CONTROLS":
                 Selected_Option = "QUIT"
             elif event.key == pygame.K_DOWN and Selected_Option == "QUIT":
                 Selected_Option = "PLAY"
@@ -251,6 +257,10 @@ while Show_Menu_Screen:
         text_start = text_format("PLAY", 'Comic Sans', 40, WHITE)
     else:
         text_start = text_format("PLAY", 'Comic Sans', 40, GREY)
+    if Selected_Option == "CONTROLS":
+        text_controls = text_format("CONTROLS", 'Comic Sans', 40, WHITE)
+    else:
+        text_controls = text_format("CONTROLS", 'Comic Sans', 40, GREY)
     if Selected_Option == "QUIT":
         text_quit = text_format("QUIT", 'Comic Sans', 40, WHITE)
     else:
@@ -276,8 +286,10 @@ while Show_Menu_Screen:
     
     start_rect = text_start.get_rect()
     quit_rect = text_quit.get_rect()
+    controls_rect = text_controls.get_rect()
     game_display.blit(text_start, (WINDOW_WIDTH/2 - (start_rect[2]/2), 300))
-    game_display.blit(text_quit, (WINDOW_WIDTH/2 - (quit_rect[2]/2), 360))
+    game_display.blit(text_quit, (WINDOW_WIDTH/2 - (quit_rect[2]/2), 420))
+    game_display.blit(text_controls, (WINDOW_WIDTH/2 - (controls_rect[2]/2), 360))
     title_text = title_font.render('| STAR INVASION |', False, CYAN)
     title_press_start_text = title_press_start_font.render('PRESS ENTER TO START', False, RED)
     title_copyright_text = title_copyright_font.render('©2019 JOHN WILLIAM JONES III | TRUECODERS', False, BLUE)
@@ -324,9 +336,11 @@ def pause_game():
             if event.type == pygame.QUIT:
                 game_is_paused = False
                 START_GAME = False
+                quit()
             elif event.type == pygame.KEYDOWN:
-                 if event.key == pygame.K_p:
-                     game_is_paused = False
+                if event.key == pygame.K_p:
+                    game_is_paused = False
+                
         clock.tick(GAME_FPS)  
 
 # Main Game Loop
@@ -416,6 +430,8 @@ while START_GAME:
             clock.tick(.7)
             fleet = Fleet(0, 0, FLEET_SPEED, enemy_image, GAME_LEFT_WALL + 1, GAME_TOP_WALL + 1)
             START_GAME = False
+            if START_GAME == False:
+                    execfile("space_invaders.py")
             
     # Removing dead instances of classes
     fleet.remove_dead_ships()
