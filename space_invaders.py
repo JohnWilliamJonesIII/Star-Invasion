@@ -45,6 +45,7 @@ background_music_tracks = ['media/rocketman.ogg', 'media/spaceoddity.ogg', 'medi
 current_background_music_track = 0 
 music_track_over = pygame.USEREVENT
 pygame.mixer.music.set_endevent(music_track_over)
+ROOT_DIR = os.getcwd()
 def play_music(path):
     songs = []
     for filename in os.listdir(path):
@@ -202,7 +203,8 @@ def text_format(message, textFont, textSize, textColor):
     newFont = pygame.font.SysFont(textFont, textSize)
     newText = newFont.render(message, 0, textColor)
     return newText
-songs = play_music(path = '/Users/John/Source/Repos/SpaceInvadersMarkVIII/Media')
+MEDIA_DIR = os.path.join(ROOT_DIR, "media")
+songs = play_music(path = MEDIA_DIR)
 current_background_music_track = 2 # The current song to load
 pygame.mixer.music.load(songs[current_background_music_track])
 pygame.mixer.music.play()
