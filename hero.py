@@ -4,7 +4,7 @@ from ultra_bullet import Ultra_Bullet
 from game_object import Game_Object
 
 class Hero(Game_Object):
-    def __init__(self, image, x_coordinate, y_coordinate):
+    def __init__(self, image, x_coordinate, y_coordinate):       
         self.direction = 0
         self.speed = 10
         self.score = 0
@@ -100,10 +100,16 @@ class Hero(Game_Object):
         
     def move(self, left_wall, right_wall):
         if self.direction == -1 and self.collided_with_left_wall(left_wall) == False:
-            self.xcor += self.speed * self.direction
+            if self.xcor <= 0:
+                self.xcor += 1
+            else:
+                self.xcor -= self.speed
         elif self.direction == 1 and self.collided_with_right_wall(right_wall) == False:
-            self.xcor += self.speed * self.direction
-
+            if self.xcor >= 500 * 600:
+                self.xcor = 500 * 600
+            else:
+                self.xcor += self.speed * self.direction
+            
     def set_direction_right(self):
         self.direction = 1
     def set_direction_left(self):

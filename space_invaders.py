@@ -64,7 +64,7 @@ BACKGROUND_COLOR = (0, 0, 0)
 BLACK = (0, 0 ,0)
 WHITE = (255, 255, 255)
 YELLOW = (255, 255, 0)
-ORANGE = (255, 165, 0)
+ORANGE = (130, 130, 0)
 LIME_GREEN = (0, 255, 0)
 FOREST_GREEN = (0, 150, 0)
 BLUE = (0, 0, 255)
@@ -171,7 +171,7 @@ def handle_events():
             elif event.key == pygame.K_2 or event.key == pygame.K_KP2:
                 current_background_music_track = 1 # The current song to load
                 pygame.mixer.music.load(songs[current_background_music_track])
-                pygame.mixer.music.play()
+                pygame.mixer.music.play()              
             elif event.key == pygame.K_3 or event.key == pygame.K_KP3:
                 current_background_music_track = 2 # The current song to load
                 pygame.mixer.music.load(songs[current_background_music_track])
@@ -260,9 +260,9 @@ while Show_Menu_Screen:
     else:
         text_start = text_format("PLAY", 'Comic Sans', 40, GREY)
     if Selected_Option == "CONTROLS":
-        text_controls = text_format("CONTROLS", 'Comic Sans', 40, WHITE)
+        text_controls = text_format("CONTROLS", 'Comic Sans', 40, YELLOW)
     else:
-        text_controls = text_format("CONTROLS", 'Comic Sans', 40, GREY)
+        text_controls = text_format("CONTROLS", 'Comic Sans', 40, ORANGE)
     if Selected_Option == "QUIT":
         text_quit = text_format("QUIT", 'Comic Sans', 40, WHITE)
     else:
